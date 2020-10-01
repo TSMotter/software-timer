@@ -103,8 +103,6 @@ static bool validade_tim_parameters(uint16_t period_ms, void* cbFunc)
 ***************************************************************************************************/
 static soft_tim_st *get_timer_by_id(uint8_t ID)
 {
-    soft_tim_st LocalInstance;
-
     for(int i = 0; i < MAX_SOFT_TIM_INSTANCES; i++)
     {
         if(TimersArray[i].private_member.id == ID)
