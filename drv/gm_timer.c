@@ -21,7 +21,7 @@ static int          index_of_first_available_timer  (void);
 static uint8_t      num_of_allocated_timers         (void);
 static bool         validade_tim_parameters         (uint16_t period_ms, void* cbFunc);
 static void         reload_timer                    (soft_tim_st *Timer);
-static soft_tim_st  *get_timer_by_id                (uint8_t ID);
+
 /***************************************************************************************************
 * Externals
 ***************************************************************************************************/
@@ -96,21 +96,6 @@ static bool validade_tim_parameters(uint16_t period_ms, void* cbFunc)
     }   
 
     return TRUE; 
-}
-
-/***************************************************************************************************
-* @brief Returns a pointer to the software timer instance of id == ID
-***************************************************************************************************/
-static soft_tim_st *get_timer_by_id(uint8_t ID)
-{
-    for(int i = 0; i < MAX_SOFT_TIM_INSTANCES; i++)
-    {
-        if(TimersArray[i].private_member.id == ID)
-        {
-          return &TimersArray[i];
-        }
-    }
-    return NULL;  
 }
 
 /***************************************************************************************************
