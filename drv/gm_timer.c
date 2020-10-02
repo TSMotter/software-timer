@@ -86,16 +86,16 @@ static bool validade_tim_parameters(uint16_t period_ms, void* cbFunc)
     // Check pointer
     if(cbFunc == NULL)
     {
-        return FALSE;
+        return false;
     }
     
     // Check period
     if((period_ms > MAX_SOFT_TIM_PERIOD_MS) || (period_ms == 0))
     {
-        return FALSE;
+        return false;
     }   
 
-    return TRUE; 
+    return true; 
 }
 
 /***************************************************************************************************
@@ -130,7 +130,7 @@ soft_tim_st *SofTim_AllocateTimer(uint16_t period_ms, bool reload, void *call_ba
     }
 
     // Check parameters
-    if(validade_tim_parameters(period_ms, call_back) == FALSE)
+    if(validade_tim_parameters(period_ms, call_back) == false)
     {
         return NULL;
     }
@@ -165,12 +165,12 @@ bool SofTim_StartTimer(soft_tim_st *Timer)
 {
     if(Timer == NULL)
     {
-        return FALSE;
+        return false;
     }   
 
     reload_timer(Timer);
     Timer->status = TIMER_RUNNING;
-    return TRUE;
+    return true;
 }
 
 /***************************************************************************************************
@@ -180,11 +180,11 @@ bool SofTim_StopTimer(soft_tim_st *Timer)
 {
     if(Timer == NULL)
     {
-        return FALSE;
+        return false;
     }  
 
     Timer->status = TIMER_STOPPED;
-    return TRUE;
+    return true;
 }
 
 /***************************************************************************************************
@@ -203,7 +203,7 @@ void SofTim_Tick(void)
                 TimersArray[i].call_back(TimersArray[i].param1, TimersArray[i].param2);
 
                 // If the timer is reloadable, reload it
-                if( TimersArray[i].reload == TRUE)
+                if( TimersArray[i].reload == true)
                 {
                     reload_timer(&TimersArray[i]);
                 }
@@ -224,9 +224,9 @@ bool SofTim_FreeTimer(soft_tim_st *Timer)
 {
     if(Timer == NULL)
     {
-        return FALSE;
+        return false;
     }
     
     memset(Timer, 0, sizeof(soft_tim_st));
-    return TRUE;
+    return true;
 }

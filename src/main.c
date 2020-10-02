@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <time.h>
 #include <string.h>
+#include <stdbool.h>
 
 void delay(int mili_seconds);
 void Tim_Call_Back(char *Data, uint16_t DataLen);
@@ -25,7 +26,7 @@ int main()
     // Always call this function beforea allocating the timers
     SofTim_InitializeModule();
     
-    stTimer1 = SofTim_AllocateTimer(1000, TRUE, &Tim_Call_Back, DataTIM1, strlen(DataTIM1));
+    stTimer1 = SofTim_AllocateTimer(1000, true, &Tim_Call_Back, DataTIM1, strlen(DataTIM1));
     if(stTimer1 == NULL)
     {
         // Handle error here...
@@ -33,7 +34,7 @@ int main()
         return 0;
     }
     
-    stTimer2 = SofTim_AllocateTimer(5000, FALSE, &Tim_Call_Back, DataTIM2, strlen(DataTIM2));
+    stTimer2 = SofTim_AllocateTimer(5000, false, &Tim_Call_Back, DataTIM2, strlen(DataTIM2));
     if(stTimer2 == NULL)
     {
         // Handle error here...

@@ -13,6 +13,7 @@
 * Includes
 ***************************************************************************************************/
 #include <stdint.h>
+#include <stdbool.h>
 
 /***************************************************************************************************
 * Defines
@@ -41,13 +42,6 @@ typedef uint32_t tick_type;
 // Create your own...
 //#elif ...
 #endif
-
-
-typedef enum
-{
-    FALSE = 0,
-    TRUE,
-}bool;
 
 typedef enum
 {
