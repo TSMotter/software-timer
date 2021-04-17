@@ -27,7 +27,7 @@ void test_SofTim_AllocateTimer(void)
     // Create MAX_SOFT_TIM_INSTANCES timers
     for(int k = 0; k < MAX_SOFT_TIM_INSTANCES; k ++)
     {
-        TEST_ASSERT_NOT_EQUAL(NULL, SofTim_AllocateTimer(1000, TRUE, CallBackTestFunc, NULL, 0));
+        TEST_ASSERT_NOT_EQUAL(NULL, SofTim_AllocateTimer(1000, true, CallBackTestFunc, NULL, 0));
     }
 }
 
@@ -41,18 +41,18 @@ void test_SofTim_FreeTimer(void)
     // Create (MAX_SOFT_TIM_INSTANCES-1) timers
     for(int k = 0; k < (MAX_SOFT_TIM_INSTANCES-1); k ++)
     {
-        TEST_ASSERT_NOT_EQUAL(NULL, SofTim_AllocateTimer(1000, TRUE, CallBackTestFunc, NULL, 0));
+        TEST_ASSERT_NOT_EQUAL(NULL, SofTim_AllocateTimer(1000, true, CallBackTestFunc, NULL, 0));
     }
 
     // Create the last timer
-    stTimer = SofTim_AllocateTimer(1000, TRUE, CallBackTestFunc, NULL, 0);
+    stTimer = SofTim_AllocateTimer(1000, true, CallBackTestFunc, NULL, 0);
     TEST_ASSERT_NOT_EQUAL(NULL, stTimer);
     
     // Free the timer last created 
     SofTim_FreeTimer(stTimer);
 
     // Try creating a new one
-    TEST_ASSERT_NOT_EQUAL(NULL, SofTim_AllocateTimer(1000, TRUE, CallBackTestFunc, NULL, 0));
+    TEST_ASSERT_NOT_EQUAL(NULL, SofTim_AllocateTimer(1000, true, CallBackTestFunc, NULL, 0));
 }
 
 /***************************************************************************************************
@@ -63,11 +63,11 @@ void test_SofTim_MaxInstances(void)
     // Create MAX_SOFT_TIM_INSTANCES timers
     for(int k = 0; k < MAX_SOFT_TIM_INSTANCES; k ++)
     {
-        TEST_ASSERT_NOT_EQUAL(NULL, SofTim_AllocateTimer(1000, TRUE, CallBackTestFunc, NULL, 0));
+        TEST_ASSERT_NOT_EQUAL(NULL, SofTim_AllocateTimer(1000, true, CallBackTestFunc, NULL, 0));
     }
 
     // This call should not be able to create a new timer instance
-    TEST_ASSERT_EQUAL(NULL, SofTim_AllocateTimer(1000, TRUE, CallBackTestFunc, NULL, 0));
+    TEST_ASSERT_EQUAL(NULL, SofTim_AllocateTimer(1000, true, CallBackTestFunc, NULL, 0));
 }
 
 /***************************************************************************************************
@@ -76,7 +76,7 @@ void test_SofTim_MaxInstances(void)
 void test_SofTim_InvalidPeriod(void)
 {   
     // Try to create a timer with invalid period
-    TEST_ASSERT_EQUAL(NULL, SofTim_AllocateTimer(0xFFFF, TRUE, CallBackTestFunc, NULL, 0));
+    TEST_ASSERT_EQUAL(NULL, SofTim_AllocateTimer(0xFFFF, true, CallBackTestFunc, NULL, 0));
 }
 
 
