@@ -7,6 +7,7 @@
     - C programing language;
     - C code style and pattern;
     - Unity test;
+    - CMake;
     - Project versioning and mantainence on a GIT repo;
 - Future implementations might include:
     - A dinamically allocated version of the module;

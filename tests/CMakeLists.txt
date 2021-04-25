@@ -8,4 +8,4 @@ target_link_libraries(test_gm_timer PRIVATE gm_timer)
 target_link_libraries(test_gm_timer PRIVATE unity)
 
 # Adds test
-add_test(test_SofTim_AllocateTimer test_gm_timer)
+add_test(my_tests test_gm_timer)
