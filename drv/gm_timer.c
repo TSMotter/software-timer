@@ -17,10 +17,8 @@
 /***************************************************************************************************
  * Private Functions Prototypes
  ***************************************************************************************************/
-static int     index_of_first_available_timer(void);
-static uint8_t num_of_allocated_timers(void);
-static bool    validade_tim_parameters(uint16_t period_ms, void *cbFunc);
-static void    reload_timer(soft_tim_st *Timer);
+static bool validade_tim_parameters(uint16_t period_ms, void *cbFunc);
+static void reload_timer(soft_tim_st *Timer);
 
 /***************************************************************************************************
  * Externals
@@ -29,8 +27,8 @@ static void    reload_timer(soft_tim_st *Timer);
 /***************************************************************************************************
  * Vars
  ***************************************************************************************************/
-static soft_tim_st TimersArray[MAX_SOFT_TIM_INSTANCES];
-static tick_type   tick_to_compare = 0;
+static soft_tim_st *TimersArray[MAX_SOFT_TIM_INSTANCES];
+static tick_type    tick_to_compare = 0;
 
 // Define what the "get tick" function is for your application:
 // Use this if you are going to use <time.h>
@@ -45,39 +43,6 @@ tick_type (*Tick_Func)(void) = &HAL_GetTick;
 // Create your own...
 //#elif ...
 #endif
-
-/***************************************************************************************************
- * @brief Returns a index of the vector, which will point to the first available
- *slot
- ***************************************************************************************************/
-static int index_of_first_available_timer(void)
-{
-  for (int i = 0; i < MAX_SOFT_TIM_INSTANCES; i++)
-  {
-    if (TimersArray[i].private_member.id == 0)
-    {
-      return i;
-    }
-  }
-  return -1;  // Error
-}
-
-/***************************************************************************************************
- * @brief Returns the number of allocated timers
- ***************************************************************************************************/
-static uint8_t num_of_allocated_timers(void)
-{
-  int actives = 0;
-
-  for (int i = 0; i < MAX_SOFT_TIM_INSTANCES; i++)
-  {
-    if (TimersArray[i].private_member.id != 0)
-    {
-      actives++;
-    }
-  }
-  return actives;
-}
 
 /***************************************************************************************************
  * @brief Indicate if the timer you are trying to create have valid parameters
@@ -105,9 +70,8 @@ static bool validade_tim_parameters(uint16_t period_ms, void *cbFunc)
  ***************************************************************************************************/
 static void reload_timer(soft_tim_st *Timer)
 {
-  tick_type time_now = Tick_Func();
-
-  Timer->private_member.target_tick = time_now + Timer->period_ms;
+  tick_type time_now                = Tick_Func();
+  Timer->private_member.target_tick = time_now + (Timer->period_ms * 1000);
 }
 
 /***************************************************************************************************
@@ -115,51 +79,53 @@ static void reload_timer(soft_tim_st *Timer)
  ***************************************************************************************************/
 void SofTim_InitializeModule(void)
 {
-  memset(TimersArray, 0, (MAX_SOFT_TIM_INSTANCES * sizeof(soft_tim_st)));
+  for (uint8_t k = 0; k < MAX_SOFT_TIM_INSTANCES; k++)
+  {
+    TimersArray[k] = NULL;
+  }
 }
 
 /***************************************************************************************************
  * @brief Create a new software timer instance and returns the pointer of where
  *it's allocated
  ***************************************************************************************************/
-soft_tim_st *SofTim_AllocateTimer(uint16_t period_ms, bool reload,
-                                  void *call_back, void *par1, uint16_t par2)
+bool SofTim_AllocateTimer(soft_tim_st *handle, uint16_t period_ms, bool reload,
+                          void *call_back, void *par1, uint16_t par2)
 {
-  soft_tim_st LocalInstance;
-
-  // Check for the max number of timers
-  if (num_of_allocated_timers() >= MAX_SOFT_TIM_INSTANCES)
-  {
-    return NULL;
-  }
+  int idx = -1;
 
   // Check parameters
   if (validade_tim_parameters(period_ms, call_back) == false)
   {
-    return NULL;
+    return false;
   }
 
-  int idx = index_of_first_available_timer();
+  // Check for the next available index and if the max number of timers is not
+  // exceeded
+  for (int i = 0; i < MAX_SOFT_TIM_INSTANCES; i++)
+  {
+    if ((TimersArray[i] == NULL) || (TimersArray[i] == handle))
+    {
+      idx = i;
+      break;
+    }
+  }
 
   if (idx < 0)
   {
-    return NULL;
+    return false;
   }
 
-  // Arbitrarily adds 10 to the id, so that:
-  // id = 0 means slot available, id != 0 means slot not available,
-  LocalInstance.private_member.id = idx + 10;
+  handle->period_ms = period_ms;
+  handle->reload    = reload;
+  handle->status    = TIMER_STOPPED;
+  handle->call_back = call_back;
+  handle->param1    = par1;
+  handle->param2    = par2;
 
-  LocalInstance.period_ms = period_ms;
-  LocalInstance.reload    = reload;
-  LocalInstance.status    = TIMER_STOPPED;
-  LocalInstance.call_back = call_back;
-  LocalInstance.param1    = par1;
-  LocalInstance.param2    = par2;
+  TimersArray[idx] = handle;
 
-  memcpy(&TimersArray[idx], &LocalInstance, sizeof(soft_tim_st));
-
-  return &TimersArray[idx];
+  return true;
 }
 
 /***************************************************************************************************
@@ -202,22 +168,23 @@ void SofTim_Tick(void)
 
   for (int i = 0; i < MAX_SOFT_TIM_INSTANCES; i++)
   {
-    if (TimersArray[i].status == TIMER_RUNNING)
+    if ((TimersArray[i]) && (TimersArray[i]->status == TIMER_RUNNING))
     {
-      if (tick_to_compare >= TimersArray[i].private_member.target_tick)
+      if (tick_to_compare >= TimersArray[i]->private_member.target_tick)
       {
         // Calls the callback
-        TimersArray[i].call_back(TimersArray[i].param1, TimersArray[i].param2);
+        TimersArray[i]->call_back(TimersArray[i]->param1,
+                                  TimersArray[i]->param2);
 
         // If the timer is reloadable, reload it
-        if (TimersArray[i].reload == true)
+        if (TimersArray[i]->reload == true)
         {
-          reload_timer(&TimersArray[i]);
+          reload_timer(TimersArray[i]);
         }
         // Otherwise, stop it
         else
         {
-          TimersArray[i].status = TIMER_STOPPED;
+          TimersArray[i]->status = TIMER_STOPPED;
         }
       }
     }
@@ -234,6 +201,14 @@ bool SofTim_FreeTimer(soft_tim_st *Timer)
     return false;
   }
 
-  memset(Timer, 0, sizeof(soft_tim_st));
-  return true;
+  for (int i = 0; i < MAX_SOFT_TIM_INSTANCES; i++)
+  {
+    if (TimersArray[i] == Timer)
+    {
+      TimersArray[i] = NULL;
+      return true;
+    }
+  }
+
+  return false;
 }

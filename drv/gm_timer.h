@@ -52,7 +52,6 @@ typedef enum
 
 typedef struct
 {
-  uint8_t   id;
   tick_type target_tick;
 } internal_timer_things_st;
 
@@ -71,12 +70,12 @@ typedef struct
 /***************************************************************************************************
  * Prototypes
  ***************************************************************************************************/
-void         SofTim_InitializeModule(void);
-soft_tim_st *SofTim_AllocateTimer(uint16_t period_ms, bool reload,
-                                  void *call_back, void *par1, uint16_t par2);
-bool         SofTim_FreeTimer(soft_tim_st *Timer);
-bool         SofTim_StartTimer(soft_tim_st *Timer);
-bool         SofTim_StopTimer(soft_tim_st *Timer);
-void         SofTim_Tick(void);
+void SofTim_InitializeModule(void);
+bool SofTim_AllocateTimer(soft_tim_st *handle, uint16_t period_ms, bool reload,
+                          void *call_back, void *par1, uint16_t par2);
+bool SofTim_FreeTimer(soft_tim_st *Timer);
+bool SofTim_StartTimer(soft_tim_st *Timer);
+bool SofTim_StopTimer(soft_tim_st *Timer);
+void SofTim_Tick(void);
 
 #endif

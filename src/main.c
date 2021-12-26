@@ -18,34 +18,34 @@ void Tim_Call_Back(char *Data, uint16_t DataLen);
 
 int main()
 {
-  soft_tim_st *stTimer1   = NULL;
-  soft_tim_st *stTimer2   = NULL;
-  char         DataTIM1[] = "Timer1";
-  char         DataTIM2[] = "Timer2";
+  soft_tim_st stTimer1;
+  soft_tim_st stTimer2;
+  char        DataTIM1[] = "Timer1";
+  char        DataTIM2[] = "Timer2";
 
   // Always call this function beforea allocating the timers
   SofTim_InitializeModule();
 
-  stTimer1 = SofTim_AllocateTimer(1000, true, &Tim_Call_Back, DataTIM1,
-                                  strlen(DataTIM1));
-  if (stTimer1 == NULL)
+  bool test1 = SofTim_AllocateTimer(&stTimer1, 1000, true, &Tim_Call_Back,
+                                    DataTIM1, strlen(DataTIM1));
+  if (test1 == false)
   {
     // Handle error here...
     printf("\nUnable to create Timer1\n");
     return 0;
   }
 
-  stTimer2 = SofTim_AllocateTimer(5000, false, &Tim_Call_Back, DataTIM2,
-                                  strlen(DataTIM2));
-  if (stTimer2 == NULL)
+  bool test2 = SofTim_AllocateTimer(&stTimer2, 5000, false, &Tim_Call_Back,
+                                    DataTIM2, strlen(DataTIM2));
+  if (test2 == false)
   {
     // Handle error here...
     printf("\nUnable to create Timer2\n");
     return 0;
   }
 
-  SofTim_StartTimer(stTimer1);
-  SofTim_StartTimer(stTimer2);
+  SofTim_StartTimer(&stTimer1);
+  SofTim_StartTimer(&stTimer2);
 
   // Loop executing with known period of 1ms
   // On an embedded application this could be a hardware timer ISR
