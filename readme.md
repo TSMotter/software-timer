@@ -7,6 +7,7 @@
     - Jenkins;
     - CMake;
     - Unity test;
+    - Clang formatter;
     - Project versioning and mantainence on a GIT repo;
     - C code style and pattern;
     - C programing language;
