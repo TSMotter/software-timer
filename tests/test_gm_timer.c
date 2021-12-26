@@ -8,12 +8,16 @@
 #include "unity.h"
 #include "gm_timer.h"
 
-void CallBackTestFunc(void)
+int CallbackCounter = 0;
+
+void CallBackTestFunc(void *par1, uint16_t par2)
 {
+  CallbackCounter++;
 }
 
 void setUp(void)
 {
+  CallbackCounter = 0;
   SofTim_InitializeModule();
 }
 
@@ -98,6 +102,51 @@ void test_SofTim_InvalidPeriod(void)
                                                 CallBackTestFunc, NULL, 0));
 }
 
+/***************************************************************************************************
+ * @brief Test case to check that callback is in fact called for one shot timer
+ ***************************************************************************************************/
+void test_SofTim_OneShotCallbackIsCalled(void)
+{
+  soft_tim_st stOneShotTimer;
+  uint16_t    period = 100;
+
+  // Create a timer
+  TEST_ASSERT_NOT_EQUAL(false,
+                        SofTim_AllocateTimer(&stOneShotTimer, period, false,
+                                             CallBackTestFunc, NULL, 0));
+
+  TEST_ASSERT_NOT_EQUAL(false, SofTim_StartTimer(&stOneShotTimer));
+
+  while (CallbackCounter == 0)
+  {
+    SofTim_Tick();
+  }
+
+  TEST_ASSERT_EQUAL(1, CallbackCounter);
+}
+
+/***************************************************************************************************
+ * @brief Test case to check that callback is in fact called for periodic timer
+ ***************************************************************************************************/
+void test_SofTim_PeriodicCallbackIsCalled(void)
+{
+  soft_tim_st stPeriodicTimer;
+  uint16_t    period = 100;
+
+  // Create a timer
+  TEST_ASSERT_NOT_EQUAL(false,
+                        SofTim_AllocateTimer(&stPeriodicTimer, period, true,
+                                             CallBackTestFunc, NULL, 0));
+
+  TEST_ASSERT_NOT_EQUAL(false, SofTim_StartTimer(&stPeriodicTimer));
+
+  while (CallbackCounter < 2)
+  {
+    SofTim_Tick();
+  }
+
+  TEST_ASSERT_EQUAL(2, CallbackCounter);
+}
 
 int main(void)
 {
@@ -107,6 +156,8 @@ int main(void)
   RUN_TEST(test_SofTim_FreeTimer);
   RUN_TEST(test_SofTim_MaxInstances);
   RUN_TEST(test_SofTim_InvalidPeriod);
+  RUN_TEST(test_SofTim_OneShotCallbackIsCalled);
+  RUN_TEST(test_SofTim_PeriodicCallbackIsCalled);
 
   return UNITY_END();
 }
