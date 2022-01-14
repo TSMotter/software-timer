@@ -6,6 +6,7 @@
   http://localhost:8080/env-vars.html/
 */
 
+// DECLARATIVE PIPELINE
 pipeline {
   agent any
   
