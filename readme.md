@@ -10,3 +10,16 @@
     - Clang formatter;
     - GIT;
     - C programing language;
+
+- Examples of commands to operate the repository:
+
+```bash
+# [r]ebuild and [e]xecute the example
+$ ./bbuild.sh -r -e example
+
+# [r]ebuild and [e]xecute the (unit) tests
+$ ./bbuild.sh -r -e tests
+
+# [r]ebuild the shared library (.so file)
+$ ./bbuild.sh -r drv
+```
