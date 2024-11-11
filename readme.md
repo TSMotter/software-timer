@@ -21,5 +21,5 @@ $ ./bbuild.sh -r -e example
 $ ./bbuild.sh -r -e tests
 
 # [r]ebuild the shared library (.so file)
-$ ./bbuild.sh -r drv
+$ ./bbuild.sh -r lib
 ```

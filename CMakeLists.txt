@@ -8,7 +8,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(TARGET_GROUP production CACHE STRING "What Should I Build?")
 
 # Should be present in all builds
-add_subdirectory (drv) 
+add_subdirectory (lib) 
 
 if(TARGET_GROUP STREQUAL example)
   add_subdirectory (example)
@@ -17,7 +17,7 @@ elseif(TARGET_GROUP STREQUAL tests)
   add_subdirectory(external)
   add_subdirectory(tests)
   enable_testing()
-elseif(TARGET_GROUP STREQUAL drv)
+elseif(TARGET_GROUP STREQUAL lib)
   message("-- Building only the driver itself as a shared library")
 else()
   message(FATAL_ERROR "I don't know the TARGET_GROUP you gave me!")
