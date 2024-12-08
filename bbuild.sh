@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 # Global flags
-global_flag_f_format=0
-global_flag_s_format=0
-global_flag_b_build=0
-global_flag_r_rebuild=0
-global_flag_e_execute=0
-global_flag_v_verbose=0
-global_value_target=""
+GLOBAL_FLAG_F_FORMAT=0
+GLOBAL_FLAG_S_FORMAT=0
+GLOBAL_FLAG_B_BUILD=0
+GLOBAL_FLAG_R_REBUILD=0
+GLOBAL_FLAG_E_EXECUTE=0
+GLOBAL_FLAG_V_VERBOSE=0
+GLOBAL_VALUE_TARGET=""
 
 #################################################################################
 
@@ -43,7 +43,7 @@ EOF
 #
 function print_banner()
 {
-    if [[ global_flag_v_verbose -eq 1 ]]; then
+    if [[ GLOBAL_FLAG_V_VERBOSE -eq 1 ]]; then
         printf "\n================================================================================\n"
         printf "%s\n" "$*"
         printf "================================================================================\n\n"
@@ -57,7 +57,7 @@ function print_banner()
 #
 function print_header()
 {
-    if [[ global_flag_v_verbose -eq 1 ]]; then
+    if [[ GLOBAL_FLAG_V_VERBOSE -eq 1 ]]; then
         printf "==-- %s --==\n" "$*"
     fi
 }
@@ -132,7 +132,7 @@ function func_execute()
 {
     print_banner "Executing code"
 
-    ./build/main
+    ./build/${GLOBAL_VALUE_TARGET}/${GLOBAL_VALUE_TARGET}
 }
 
 ################################################################################
@@ -145,27 +145,27 @@ function gather_params()
     while [[ $# -gt 0 ]]; do
         case $1 in
             -f | --format)
-                global_flag_f_format=1
+                GLOBAL_FLAG_F_FORMAT=1
                 shift
                 ;;
             -s | --static)
-                global_flag_s_format=1
+                GLOBAL_FLAG_S_FORMAT=1
                 shift
                 ;;
             -b | --build)
-                global_flag_b_build=1
+                GLOBAL_FLAG_B_BUILD=1
                 shift
                 ;;
             -r | --rebuild)
-                global_flag_r_rebuild=1
+                GLOBAL_FLAG_R_REBUILD=1
                 shift
                 ;;
             -e | --execute)
-                global_flag_e_execute=1
+                GLOBAL_FLAG_E_EXECUTE=1
                 shift
                 ;;
             -v | --verbose)
-                global_flag_v_verbose=1
+                GLOBAL_FLAG_V_VERBOSE=1
                 shift
                 ;;
             -h | --help)
@@ -173,16 +173,15 @@ function gather_params()
                 exit
                 ;;
             *)
-                global_value_target=$1
+                GLOBAL_VALUE_TARGET=$1
                 shift
                 ;;
         esac
     done
 
     # Allow only format or static analysis without specifying <target>
-    #if [ global_flag_f_format -eq 0 ] && [ global_flag_s_format -eq 0 ]; then
-    if [ "$global_flag_f_format" -eq 0 ] && [ "$global_flag_s_format" -eq 0 ]; then
-        if [[ -z "$global_value_target" ]]; then
+    if [ "$GLOBAL_FLAG_F_FORMAT" -eq 0 ] && [ "$GLOBAL_FLAG_S_FORMAT" -eq 0 ]; then
+        if [[ -z "$GLOBAL_VALUE_TARGET" ]]; then
             echo "Please, define a <target>"
             print_help
             exit
@@ -197,19 +196,19 @@ function gather_params()
 #
 function execute_logic()
 {
-    if [[ global_flag_f_format -eq 1 ]]; then
+    if [[ GLOBAL_FLAG_F_FORMAT -eq 1 ]]; then
         func_format
     fi
-    if [[ global_flag_s_format -eq 1 ]]; then
+    if [[ GLOBAL_FLAG_S_FORMAT -eq 1 ]]; then
         func_static
     fi
-    if [[ global_flag_b_build -eq 1 ]]; then
-        func_build "$global_value_target"
+    if [[ GLOBAL_FLAG_B_BUILD -eq 1 ]]; then
+        func_build "$GLOBAL_VALUE_TARGET"
     fi
-    if [[ global_flag_r_rebuild -eq 1 ]]; then
-        func_rebuild "$global_value_target"
+    if [[ GLOBAL_FLAG_R_REBUILD -eq 1 ]]; then
+        func_rebuild "$GLOBAL_VALUE_TARGET"
     fi
-    if [[ global_flag_e_execute -eq 1 ]]; then
+    if [[ GLOBAL_FLAG_E_EXECUTE -eq 1 ]]; then
         func_execute
     fi
 }
@@ -223,7 +222,7 @@ function main()
 {
     # Gather params
     gather_params "$@"
-    execute_logic "$global_value_target"
+    execute_logic "$GLOBAL_VALUE_TARGET"
 }
 
 

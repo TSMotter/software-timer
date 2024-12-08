@@ -1,9 +1,6 @@
 cmake_minimum_required (VERSION 3.14)
 project (software-timer VERSION 0.1 DESCRIPTION "Simple Software Timer Module")
 
-# Defines that the output executable will be at the 'root' of the build dir
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-
 # Variable TARGET_GROUP should be passed as an argument when callin the cmake
 set(TARGET_GROUP production CACHE STRING "What Should I Build?")
 
